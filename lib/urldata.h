@@ -1750,6 +1750,7 @@ struct UserDefined {
   CURLU *uh; /* URL handle for the current parsed URL */
   void *trailer_data; /* pointer to pass to trailer data callback */
   curl_trailer_callback trailer_callback; /* trailing data callback */
+  long h3opts; /* the CURLOPT_H3 bitmask */
 };
 
 struct Names {
