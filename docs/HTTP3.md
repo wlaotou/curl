@@ -6,7 +6,7 @@
 book describing the protocols involved.
 
 [QUIC implementation](https://github.com/curl/curl/wiki/QUIC-implementation) -
-the wiki page describing the plan for how to support QUIC and HTTP/3 in cul
+the wiki page describing the plan for how to support QUIC and HTTP/3 in curl
 and libcurl.
 
 [quicwg.org](https://quicwg.org/) - home of the official protocol drafts
