@@ -2651,6 +2651,7 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
 #ifndef CURL_DISABLE_HTTP
     data->set.trailer_data = va_arg(param, void *);
 #endif
+    break;
   case CURLOPT_H3:
 #ifdef USE_NGTCP2
     arg = va_arg(param, long);
