@@ -39,8 +39,8 @@ struct quic_handshake {
 
 struct quicsocket {
   ngtcp2_conn *conn;
-  const ngtcp2_cid dcid;
-  const ngtcp2_cid scid;
+  ngtcp2_cid dcid;
+  ngtcp2_cid scid;
   uint32_t version;
   ngtcp2_conn_callbacks callbacks;
   ngtcp2_settings settings;

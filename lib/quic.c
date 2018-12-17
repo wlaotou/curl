@@ -28,6 +28,7 @@
 #include "urldata.h"
 #include "sendf.h"
 #include "strdup.h"
+#include "rand.h"
 #include "quic.h"
 #include "quic-crypto.h"
 
@@ -938,6 +939,7 @@ CURLcode Curl_quic_connect(struct connectdata *conn,
 {
   int rc;
   struct quicsocket *qs = &conn->quic;
+  CURLcode result;
   (void)sockfd;
   (void)addr;
   (void)addrlen;
@@ -949,6 +951,16 @@ CURLcode Curl_quic_connect(struct connectdata *conn,
 
   if(quic_init_ssl(conn))
     return CURLE_FAILED_INIT; /* TODO: better return code */
+
+  qs->dcid.datalen = NGTCP2_MAX_CIDLEN;
+  result = Curl_rand(conn->data, qs->dcid.data, NGTCP2_MAX_CIDLEN);
+  if(result)
+    return result;
+
+  qs->scid.datalen = NGTCP2_MAX_CIDLEN;
+  result = Curl_rand(conn->data, qs->scid.data, NGTCP2_MAX_CIDLEN);
+  if(result)
+    return result;
 
   quic_settings(&qs->settings);
   quic_callbacks(&qs->callbacks);
