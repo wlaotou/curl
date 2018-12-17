@@ -1128,6 +1128,7 @@ static CURLcode singleipconnect(struct connectdata *conn,
     result = Curl_quic_connect(conn, sockfd, &addr.sa_addr, addr.addrlen);
     if(result)
       return result;
+    rc = 0; /* connect success */
   }
 #endif
   else {
