@@ -679,8 +679,8 @@ void Curl_updateconninfo(struct connectdata *conn, curl_socket_t sockfd)
   struct Curl_sockaddr_storage ssloc;
   struct Curl_easy *data = conn->data;
 
-  if(conn->transport == TRNSPRT_UDP)
-    /* there's no connection! */
+  if(conn->transport != TRNSPRT_TCP)
+    /* there's no TCP connection! */
     return;
 
   if(!conn->bits.reuse && !conn->bits.tcp_fastopen) {
