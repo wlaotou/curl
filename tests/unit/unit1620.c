@@ -48,7 +48,7 @@ UNITTEST_START
   rc = Curl_open(&empty);
   fail_unless(rc == CURLE_OK, "Curl_open() failed");
 
-  rc = Curl_connect(empty, &empty->conn, &async, &protocol_connect);
+  rc = Curl_connect(empty, &async, &protocol_connect);
   fail_unless(rc == CURLE_URL_MALFORMAT,
               "Curl_connect() failed to return CURLE_URL_MALFORMAT");
 
@@ -56,7 +56,7 @@ UNITTEST_START
               "empty->magic should be equal to CURLEASY_MAGIC_NUMBER");
 
   /* double invoke to ensure no dependency on internal state */
-  rc = Curl_connect(empty, &empty->conn, &async, &protocol_connect);
+  rc = Curl_connect(empty, &async, &protocol_connect);
   fail_unless(rc == CURLE_URL_MALFORMAT,
               "Curl_connect() failed to return CURLE_URL_MALFORMAT");
 

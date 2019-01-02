@@ -801,10 +801,19 @@ bool Curl_pipeline_wanted(const struct Curl_multi *multi, int bits)
   return (multi && (multi->pipelining & bits)) ? TRUE : FALSE;
 }
 
-/* This is the only function that should clear data->conn */
+/* This is the only function that should clear data->conn. This will
+   occasionally be called with the pointer already cleared. */
 void Curl_detach_connnection(struct Curl_easy *data)
 {
   data->conn = NULL;
+}
+
+/* This is the only function that should assign data->conn */
+void Curl_attach_connnection(struct Curl_easy *data,
+                             struct connectdata *conn)
+{
+  DEBUGASSERT(!data->conn);
+  data->conn = conn;
 }
 
 static int waitconnect_getsock(struct connectdata *conn,
@@ -1191,17 +1200,16 @@ CURLMcode Curl_multi_add_perform(struct Curl_multi *multi,
 
     /* take this handle to the perform state right away */
     multistate(data, CURLM_STATE_PERFORM);
-    data->conn = conn;
+    Curl_attach_connnection(data, conn);
     k->keepon |= KEEP_RECV; /* setup to receive! */
   }
   return rc;
 }
 
-static CURLcode multi_reconnect_request(struct connectdata **connp)
+static CURLcode multi_reconnect_request(struct Curl_easy *data)
 {
   CURLcode result = CURLE_OK;
-  struct connectdata *conn = *connp;
-  struct Curl_easy *data = conn->data;
+  struct connectdata *conn = data->conn;
 
   /* This was a re-use of a connection and we got a write error in the
    * DO-phase. Then we DISCONNECT this connection and have another attempt to
@@ -1216,7 +1224,7 @@ static CURLcode multi_reconnect_request(struct connectdata **connp)
 
   /* conn may no longer be a good pointer, clear it to avoid mistakes by
      parent functions */
-  *connp = NULL;
+  Curl_detach_connnection(data);
 
   /*
    * We need to check for CURLE_SEND_ERROR here as well. This could happen
@@ -1228,11 +1236,11 @@ static CURLcode multi_reconnect_request(struct connectdata **connp)
     bool protocol_done = TRUE;
 
     /* Now, redo the connect and get a new connection */
-    result = Curl_connect(data, connp, &async, &protocol_done);
+    result = Curl_connect(data, &async, &protocol_done);
     if(!result) {
       /* We have connected or sent away a name resolve query fine */
 
-      conn = *connp; /* setup conn to again point to something nice */
+      conn = data->conn; /* in case it was updated */
       if(async) {
         /* Now, if async is TRUE here, we need to wait for the name
            to resolve */
@@ -1265,11 +1273,10 @@ static void do_complete(struct connectdata *conn)
   Curl_pgrsTime(conn->data, TIMER_PRETRANSFER);
 }
 
-static CURLcode multi_do(struct connectdata **connp, bool *done)
+static CURLcode multi_do(struct Curl_easy *data, bool *done)
 {
   CURLcode result = CURLE_OK;
-  struct connectdata *conn = *connp;
-  struct Curl_easy *data = conn->data;
+  struct connectdata *conn = data->conn;
 
   if(conn->handler->do_it) {
     /* generic protocol-specific function pointer set in curl_connect() */
@@ -1283,12 +1290,12 @@ static CURLcode multi_do(struct connectdata **connp, bool *done)
        * figure out how to re-establish the connection.
        */
       if(!data->multi) {
-        result = multi_reconnect_request(connp);
+        result = multi_reconnect_request(data);
 
         if(!result) {
           /* ... finally back to actually retry the DO phase */
-          conn = *connp; /* re-assign conn since multi_reconnect_request
-                            creates a new connection */
+          conn = data->conn; /* re-assign conn since multi_reconnect_request
+                                creates a new connection */
           result = conn->handler->do_it(conn, done);
         }
       }
@@ -1448,8 +1455,7 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
     case CURLM_STATE_CONNECT:
       /* Connect. We want to get a connection identifier filled in. */
       Curl_pgrsTime(data, TIMER_STARTSINGLE);
-      result = Curl_connect(data, &data->conn,
-                            &async, &protocol_connect);
+      result = Curl_connect(data, &async, &protocol_connect);
       if(CURLE_NO_CONNECTION_AVAILABLE == result) {
         /* There was no connection available. We will go to the pending
            state and wait for an available connection. */
@@ -1670,7 +1676,7 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
       }
       else {
         /* Perform the protocol's DO action */
-        result = multi_do(&data->conn, &dophase_done);
+        result = multi_do(data, &dophase_done);
 
         /* When multi_do() returns failure, data->conn might be NULL! */
 
