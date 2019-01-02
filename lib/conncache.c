@@ -572,7 +572,6 @@ void Curl_conncache_close_all_connections(struct conncache *connc)
     conn->data = connc->closure_handle;
 
     sigpipe_ignore(conn->data, &pipe_st);
-    Curl_detach_connnection(conn->data);
     /* This will remove the connection from the cache */
     connclose(conn, "kill all");
     (void)Curl_disconnect(connc->closure_handle, conn, FALSE);
