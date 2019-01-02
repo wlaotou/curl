@@ -1060,7 +1060,7 @@ CURLcode curl_easy_pause(struct Curl_easy *data, int action)
     unsigned int i;
     unsigned int count = data->state.tempcount;
     struct tempbuf writebuf[3]; /* there can only be three */
-    struct connectdata *conn = data->easy_conn;
+    struct connectdata *conn = data->conn;
     struct Curl_easy *saved_data = NULL;
 
     /* copy the structs to allow for immediate re-pausing */

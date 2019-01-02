@@ -390,7 +390,7 @@ static CURLcode getinfo_slist(struct Curl_easy *data, CURLINFO info,
                                           param_slistp;
       struct curl_tlssessioninfo *tsi = &data->tsi;
 #ifdef USE_SSL
-      struct connectdata *conn = data->easy_conn;
+      struct connectdata *conn = data->conn;
 #endif
 
       *tsip = tsi;

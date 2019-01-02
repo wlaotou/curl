@@ -1777,7 +1777,7 @@ struct Curl_easy {
   struct Curl_easy *next;
   struct Curl_easy *prev;
 
-  struct connectdata *easy_conn;     /* the "unit's" connection */
+  struct connectdata *conn;
   struct curl_llist_element connect_queue;
   struct curl_llist_element pipeline_queue;
 

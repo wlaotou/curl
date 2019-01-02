@@ -643,7 +643,7 @@ static CURLcode CONNECT(struct connectdata *conn,
 
 void Curl_connect_free(struct Curl_easy *data)
 {
-  struct connectdata *conn = data->easy_conn;
+  struct connectdata *conn = data->conn;
   struct http_connect_state *s = conn->connect_state;
   if(s) {
     free(s);

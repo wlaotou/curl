@@ -800,7 +800,7 @@ static int on_data_chunk_recv(nghttp2_session *session, uint8_t flags,
     H2BUGF(infof(data_s, "NGHTTP2_ERR_PAUSE - %zu bytes out of buffer"
                  ", stream %u\n",
                  len - nread, stream_id));
-    data_s->easy_conn->proto.httpc.pause_stream_id = stream_id;
+    data_s->conn->proto.httpc.pause_stream_id = stream_id;
 
     return NGHTTP2_ERR_PAUSE;
   }
@@ -808,7 +808,7 @@ static int on_data_chunk_recv(nghttp2_session *session, uint8_t flags,
   /* pause execution of nghttp2 if we received data for another handle
      in order to process them first. */
   if(conn->data != data_s) {
-    data_s->easy_conn->proto.httpc.pause_stream_id = stream_id;
+    data_s->conn->proto.httpc.pause_stream_id = stream_id;
 
     return NGHTTP2_ERR_PAUSE;
   }

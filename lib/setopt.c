@@ -1699,8 +1699,8 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
       TRUE : FALSE;
 
     /* Update the current connection ssl_config. */
-    if(data->easy_conn) {
-      data->easy_conn->ssl_config.verifypeer =
+    if(data->conn) {
+      data->conn->ssl_config.verifypeer =
         data->set.ssl.primary.verifypeer;
     }
     break;
@@ -1712,8 +1712,8 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
       (0 != va_arg(param, long))?TRUE:FALSE;
 
     /* Update the current connection proxy_ssl_config. */
-    if(data->easy_conn) {
-      data->easy_conn->proxy_ssl_config.verifypeer =
+    if(data->conn) {
+      data->conn->proxy_ssl_config.verifypeer =
         data->set.proxy_ssl.primary.verifypeer;
     }
     break;
@@ -1736,8 +1736,8 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
     data->set.ssl.primary.verifyhost = (0 != arg) ? TRUE : FALSE;
 
     /* Update the current connection ssl_config. */
-    if(data->easy_conn) {
-      data->easy_conn->ssl_config.verifyhost =
+    if(data->conn) {
+      data->conn->ssl_config.verifyhost =
         data->set.ssl.primary.verifyhost;
     }
     break;
@@ -1760,8 +1760,8 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
     data->set.proxy_ssl.primary.verifyhost = (0 != arg)?TRUE:FALSE;
 
     /* Update the current connection proxy_ssl_config. */
-    if(data->easy_conn) {
-      data->easy_conn->proxy_ssl_config.verifyhost =
+    if(data->conn) {
+      data->conn->proxy_ssl_config.verifyhost =
         data->set.proxy_ssl.primary.verifyhost;
     }
     break;
@@ -1778,8 +1778,8 @@ CURLcode Curl_vsetopt(struct Curl_easy *data, CURLoption option,
       TRUE : FALSE;
 
     /* Update the current connection ssl_config. */
-    if(data->easy_conn) {
-      data->easy_conn->ssl_config.verifystatus =
+    if(data->conn) {
+      data->conn->ssl_config.verifystatus =
         data->set.ssl.primary.verifystatus;
     }
     break;
