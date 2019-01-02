@@ -1222,9 +1222,7 @@ static CURLcode multi_reconnect_request(struct Curl_easy *data)
   connclose(conn, "Reconnect dead connection"); /* enforce close */
   result = multi_done(data, result, FALSE); /* we are so done with this */
 
-  /* conn may no longer be a good pointer, clear it to avoid mistakes by
-     parent functions */
-  Curl_detach_connnection(data);
+  /* data->conn was detached in multi_done() */
 
   /*
    * We need to check for CURLE_SEND_ERROR here as well. This could happen
