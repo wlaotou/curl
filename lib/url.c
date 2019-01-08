@@ -3607,6 +3607,7 @@ static CURLcode create_conn(struct Curl_easy *data,
   size_t max_total_connections = Curl_multi_max_total_connections(data->multi);
 
   *async = FALSE;
+  *in_connect = NULL;
 
   /*************************************************************
    * Check input data
